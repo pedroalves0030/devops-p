@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    networks:
+      - metrics
+
+  node_app:
+    build: .
+    environment:
+      PORT: 4000
+    ports:
+      - 4001:4000
+    networks:
+      - metrics
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/MongoDBAlert.rules.yml:/etc/prometheus/MongoDBAlert.rules
+      - ./prometheus/WebApi.rules.yml:/etc/prometheus/WebApi.rules
+    networks:
+      - metrics
+
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    networks:
+      - metrics
+
+  mongo_exporter:
+    image: percona/mongodb_exporter:0.20
+    ports:
+      - 9216:9216
+    networks:
+      - metrics
+    environment:
+      MONGODB_URI: mongodb://mongo:27017
+
+  alertmanager:
+    image: prom/alertmanager
+    ports:
+      - 9093:9093
+    volumes:
+      - ./prometheus/alertmanager.yml:/prometheus/alertmanager.yml
+    command:
+      - --config.file=/prometheus/alertmanager.yml
+    networks:
+      - metrics
+
+networks:
+  metrics:
+    driver: bridge

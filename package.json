@@ -1,0 +1,15 @@
+{
+  "name": "devops-p",
+  "scripts": {
+    "start": "nodemon -r dotenv/config index"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongodb": "^4.2.0",
+    "prom-client": "^14.0.1"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.15"
+  }
+}

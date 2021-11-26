@@ -1,0 +1,31 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+
+rule_files:
+  - MongoDBAlert.rules
+  - WebApi.rules
+
+scrape_configs:
+  - job_name: Prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: MongoDB
+    scrape_timeout: 5s
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - "mongo_exporter:9216"
+
+  - job_name: NodeApp
+    static_configs:
+      - targets: ["node_app:4000"]
+
+alerting:
+  alertmanagers:
+    - scheme: http
+      static_configs:
+        - targets:
+            - "alertmanager:9093"
